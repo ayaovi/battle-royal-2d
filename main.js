@@ -1,15 +1,10 @@
+var time = 0;
+var timeStep = 1/60; // 60 times a second
 var agents = [];
 
-function setup(){
+function setup() {
   createCanvas(800, 800);
   agents.push(new Agent());
-}
-
-function updatePosition() {
-	agents.forEach(x => {
-    x.position.x += x.direction.x * x.velocity.x * 2;
-    x.position.y += x.direction.y * x.velocity.y * 2;
-  });
 }
 
 function Agent(x = 100, y = 100) {
@@ -20,12 +15,26 @@ function Agent(x = 100, y = 100) {
   this.scale = createVector(1, 1);
 
   this.update = function() {
+    this.direction.normalize();
+    this.velocity.x += this.acceleration.x * timeStep;
+    this.velocity.y += this.acceleration.y * timeStep;
+    this.position.x += this.velocity.x * timeStep;
+    this.position.y += this.velocity.y * timeStep;
+ 
     if (keyIsDown(LEFT_ARROW)) {
-      agents[0].direction.rotate(PI/36);
+      this.direction.rotate(PI/36);
     }
 
     if (keyIsDown(RIGHT_ARROW)) {
-      agents[0].direction.rotate(-PI/36);
+      this.direction.rotate(-PI/36);
+    }
+
+    if (keyIsDown(UP_ARROW)) {
+      this.acceleration.add(p5.Vector.mult(this.direction, 1));
+    }
+
+    if (keyIsDown(DOWN_ARROW)) {
+      this.acceleration.add(p5.Vector.mult(this.direction, -1));
     }
   };
 
@@ -34,17 +43,21 @@ function Agent(x = 100, y = 100) {
     rotate(this.direction.heading());
     scale(this.scale.x, this.scale.y);
     rect(-5, -5, 10, 10);
-    line(0, 0, 0, 10);
+    line(0, 0, 10, 0);
   };
 }
 
 function draw(){
   background(100);
-  agents.forEach(x => x.update());
+  var currentTime = millis() / 1000;
+
+  while(time < currentTime) {
+    agents.forEach(x => x.update());
+    time += timeStep;
+  }
   agents.forEach(x => {
     push();
     x.draw();
     pop();
   });
-  updatePosition();
 }
