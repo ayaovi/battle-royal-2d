@@ -19,4 +19,4 @@ A 2D battle royal game.
 * distance from target impacts shot accuracy
 * sounds?
 
-PS: No external lib, all under 13KB when compressed.
+**PS: No external lib, all under 13KB when compressed.**
