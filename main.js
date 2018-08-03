@@ -8,38 +8,53 @@ function setup() {
 }
 
 function Agent(x = 100, y = 100) {
-  this.direction = createVector(1, 0);
   this.position = createVector(x, y);
   this.velocity = createVector(0, 0);
   this.acceleration = createVector(0, 0);
+  this.direction = createVector(1, 0);
+  this.angularVelocity = 0;
+  this.torque = 0;
   this.scale = createVector(1, 1);
+  this.friction = 1;
+  this.angularFriction = 1;
 
   this.update = function() {
-    this.direction.normalize();
-    this.velocity.x += this.acceleration.x * timeStep;
-    this.velocity.y += this.acceleration.y * timeStep;
+    var frictionX = this.velocity.x * (-this.friction);
+    var frictionY = this.velocity.y * (-this.friction);
+    this.velocity.x += Math.trunc((this.acceleration.x + frictionX)*100000)/100000 * timeStep;
+    this.velocity.y += Math.trunc((this.acceleration.y + frictionY)*100000)/100000 * timeStep;
     this.position.x += this.velocity.x * timeStep;
     this.position.y += this.velocity.y * timeStep;
     this.acceleration = createVector(0, 0);
 
- 
+    this.direction.normalize();
+    var angularFrictionC = this.angularVelocity * (-this.angularFriction);
+    this.angularVelocity += Math.trunc((this.torque + angularFrictionC)*100000)/100000 * timeStep;
+    this.direction.rotate(this.angularVelocity);
+    this.torque = 0;
+
     if (keyIsDown(LEFT_ARROW)) {
-      this.direction.rotate(-PI/36);
+      this.torque = (-PI/64);
     }
 
-     if (keyIsDown(RIGHT_ARROW)) {
-      this.direction.rotate(PI/36);
+    if (keyIsDown(RIGHT_ARROW)) {
+      this.torque = (PI/64);
     }
-
+    
     if (keyIsDown(UP_ARROW)) {
-      this.acceleration = (p5.Vector.mult(this.direction, 10));
+      this.acceleration = (p5.Vector.mult(this.direction, 100));
     }
 
-     if (keyIsDown(DOWN_ARROW)) {
-      this.acceleration = (p5.Vector.mult(this.direction, -10));
+    if (keyIsDown(DOWN_ARROW)) {
+      this.acceleration = (p5.Vector.mult(this.direction, -100));
     }
-    else{
-      //this.acceleration = createVector(0, 0);
+
+    if (keyIsDown(32)) { // SPACE
+      this.acceleration = (p5.Vector.mult(this.direction, 300));
+    }
+    
+    if (keyIsDown(BACKSPACE)) {
+      this.acceleration = (p5.Vector.mult(this.direction, -300));
     }
   };
 
