@@ -20,21 +20,26 @@ function Agent(x = 100, y = 100) {
     this.velocity.y += this.acceleration.y * timeStep;
     this.position.x += this.velocity.x * timeStep;
     this.position.y += this.velocity.y * timeStep;
+    this.acceleration = createVector(0, 0);
+
  
     if (keyIsDown(LEFT_ARROW)) {
-      this.direction.rotate(PI/36);
-    }
-
-    if (keyIsDown(RIGHT_ARROW)) {
       this.direction.rotate(-PI/36);
     }
 
-    if (keyIsDown(UP_ARROW)) {
-      this.acceleration.add(p5.Vector.mult(this.direction, 1));
+     if (keyIsDown(RIGHT_ARROW)) {
+      this.direction.rotate(PI/36);
     }
 
-    if (keyIsDown(DOWN_ARROW)) {
-      this.acceleration.add(p5.Vector.mult(this.direction, -1));
+    if (keyIsDown(UP_ARROW)) {
+      this.acceleration = (p5.Vector.mult(this.direction, 10));
+    }
+
+     if (keyIsDown(DOWN_ARROW)) {
+      this.acceleration = (p5.Vector.mult(this.direction, -10));
+    }
+    else{
+      //this.acceleration = createVector(0, 0);
     }
   };
 
